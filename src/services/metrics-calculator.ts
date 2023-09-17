@@ -97,7 +97,7 @@ export class MetricsCalculator {
         return count;
     }
 
-
+    
     async calculateCorrectness(correctnessData: any): Promise<number> {
 
         return 0;
@@ -109,10 +109,22 @@ export class MetricsCalculator {
         return 0;
     }
 
-
     async calculateResponsiveMaintainer(responsiveMaintainerData: any): Promise<number> {
+        console.log("responsiveMaintainerData:",  responsiveMaintainerData.averageTimeInMillis);
 
+
+        if (!responsiveMaintainerData || !responsiveMaintainerData.averageTimeInMillis) {
+            throw new Error("responsiveMaintainerData or averageTimeInMillis is undefined");
+        }
+        const T_max = 30 * 24 * 60 * 60 * 1000; // 30 days in milliseconds
+        const T_min = 1 * 24 * 60 * 60 * 1000;  // 1 day in milliseconds
+        // get the average time is takes to to close a issue in milliseconds 
+        const A = responsiveMaintainerData.averageTimeInMillis;
+        // normalize the 
+        const score = Math.max(0, Math.min(1, (T_max - A) / (T_max - T_min)));
+        return score;
         return 0;
+
     }
 
 

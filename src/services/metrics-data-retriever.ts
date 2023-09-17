@@ -119,21 +119,151 @@ export class MetricsDataRetriever {
 
     async fetchCorrectnessData(owner: string, repo: string): Promise<any> {
 
-
     }
 
-
+    /**
+     * Fetches ramp up data for a GitHub repository.
+     *
+     * @param owner The owner of the repository.
+     * @param repo The name of the repository.
+     */
     async fetchRampUpData(owner: string, repo: string): Promise<any> {
 
+        //Queries Github for Readme and Last Version Date
+        const query = `
+        {
+        repository(owner: "${owner}", name: "${repo}") {
+            updatedAt
+            object(expression: "master:README.md") {
+              ... on Blob {
+                text
+              }
+            }
+            defaultBranchRef {
+              target {
+                ... on Commit {
+                  history(first: 1) {
+                    edges {
+                      node {
+                        committedDate
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        `;
+        try{
+            const {repository} = await this.graphqlWithAuth(query);
+            
+            //Checks if Readme Exists and when it was Last Updated
+            let readmeContent = "";
+            let readmeLength = 0;
+            let lastUpdated = "";
+            
+            if(repository?.object?.text) {
+                readmeContent = repository.object.text;
+                readmeLength = readmeContent.length;
+                lastUpdated = repository.updatedAt;
+            }
+            //The Last Version Commit of the Project or NULL
+            const lastCommit = repository.defaultBranchRef?.target?.history.edges[0]?.node.committedDate || null;
 
+            return {
+                repo: repo,
+                readmeContent: readmeContent,
+                readmeLength: readmeLength,
+                lastUpdated: lastUpdated,
+                lastCommit: lastCommit
+            };  
+            
+        } catch (error) {
+            // console.error("Error:", error.message);
+            // throw error;  
+        }        
     }
 
 
     async fetchResponsiveMaintainerData(owner: string, repo: string): Promise<any> {
+      // Query for the last 100 issues of the repository and their creation and closure dates
+      const query = `
+      {
+          repository(owner: "${owner}", name: "${repo}") {
+            issues(last: 100, orderBy: {field: CREATED_AT, direction: DESC}) {
+              edges {
+                node {
+                  id
+                  title
+                  createdAt
+                  closedAt
+                }
+              }
+            }
+          }
+        }
+      `;
+    try {
+        const response = await this.graphqlWithAuth(query);
 
+        // Error checks for response structure
+        if (!response) {
+            throw new Error("Response is undefined.");
+        }
+        if (!response.repository) {
+            throw new Error("Response.repository is undefined.");
+        }
+        if (!response.repository.issues) {
+            throw new Error("Response.repository.issues is undefined.");
+        }
+        if (!response.repository.issues.edges) {
+            throw new Error("Response.repository.issues.edges is undefined.");
+        }
+        interface IssueNode {
+          closedAt: string | number | Date;
+          createdAt: string | number | Date;
+        }
+        
+        interface Issue {
+          node: IssueNode;
+        }
 
+        const issues: Issue[] = response.repository.issues.edges;
+
+        // Initialize an array to store the time taken for each closed issue
+        const timeTakenForIssues: number[] = [];
+
+        // Your 'forEach' was not matching the correct property names, fixed that here
+        issues.forEach((issue: Issue) => {
+            // console.log("Processing an issue");
+            if (issue.node.closedAt) {
+                const createdAt = new Date(issue.node.createdAt).getTime();
+                const closedAt = new Date(issue.node.closedAt).getTime();
+                const timeTaken = closedAt - createdAt;
+                // console.log("Time taken:", timeTaken);
+                timeTakenForIssues.push(timeTaken);
+            }
+        });
+
+        if (timeTakenForIssues.length === 0) {
+            return null; // No closed issues to calculate average
+        }
+
+        const totalMillis = timeTakenForIssues.reduce((acc, time) => acc + time, 0);
+        const averageTimeInMillis = totalMillis / timeTakenForIssues.length;
+
+        return {
+            averageTimeInMillis,
+        };
+
+    } catch (error) {
+        console.error("An error occurred while fetching and processing data:", error);
+        return null;
     }
 
+  }
+  
 
     /**
      * Extracts owner and repo from a GitHub URL.
