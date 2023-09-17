@@ -146,7 +146,7 @@ export class MetricsCalculator {
     async calculateNetScore(busFactor: number, correctness: number, rampUp: number,
                             responsiveMaintainer: number, license: boolean): Promise<number> {
 
-        const NetScore = ((responsiveMaintainer * 0.28) + (busFactor * 0.28) + (rampUp * 0.22) + (correctness×0.22)) * license; 
+        const NetScore = ((responsiveMaintainer * 0.28) + (busFactor * 0.28) + (rampUp * 0.22) + (correctness * 0.22)) * (license ? 1: 0); 
 
         return NetScore;
     }
