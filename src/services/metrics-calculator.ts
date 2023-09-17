@@ -110,7 +110,6 @@ export class MetricsCalculator {
     }
 
     async calculateResponsiveMaintainer(responsiveMaintainerData: any): Promise<number> {
-        console.log("responsiveMaintainerData:",  responsiveMaintainerData.averageTimeInMillis);
 
 
         if (!responsiveMaintainerData || !responsiveMaintainerData.averageTimeInMillis) {
@@ -121,9 +120,10 @@ export class MetricsCalculator {
         // get the average time is takes to to close a issue in milliseconds 
         const A = responsiveMaintainerData.averageTimeInMillis;
         // normalize the 
-        const score = Math.max(0, Math.min(1, (T_max - A) / (T_max - T_min)));
+        // const score = Math.max(0, Math.min(1, (T_max - A) / (T_max - T_min)));
+        const score = 1 / (1 + Math.exp((T_max - A) / T_min));
+        console.log("responsiveMaintainerData score:",  score);
         return score;
-        return 0;
 
     }
 
