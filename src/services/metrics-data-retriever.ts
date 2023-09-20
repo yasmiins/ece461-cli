@@ -156,7 +156,6 @@ export class MetricsDataRetriever {
           }
         }
         `;
-        try{
             const {repository} = await this.graphqlWithAuth(query);
             
             //Checks if Readme Exists and when it was Last Updated
@@ -178,12 +177,7 @@ export class MetricsDataRetriever {
                 readmeLength: readmeLength,
                 lastUpdated: lastUpdated,
                 lastCommit: lastCommit
-            };  
-            
-        } catch (error) {
-            console.error("Error:", error.message);
-            throw error;  
-        }        
+            };            
     }
 
 
