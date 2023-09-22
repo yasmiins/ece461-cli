@@ -1,12 +1,13 @@
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
+
+
 dotenv.config();
 
-import 'reflect-metadata';
+import "reflect-metadata";
 
 import { Command } from "commander";
-import { execSync } from "child_process";
 
-import * as fs from 'fs';
+import * as fs from "fs";
 
 import { MetricsController } from "./controllers/metrics-controller";
 import { container } from "./container"
@@ -24,20 +25,13 @@ program
     .name("./run")
     .description("A CLI tool for analyzing npm modules");
 
-// ./run install -> npm install
-program
-    .command("install")
-    .description("Install dependencies")
-    .action(() => {
-        execSync("npm install", {stdio: "inherit"});
-        console.log("Dependencies successfully installed");
-    });
-
 // ./run test
 program
     .command("test")
     .description("Run test suite")
     .action(() => {
+        console.log("Running tests...");
+        require("child_process").execSync("npm run test", {stdio: "inherit"});
     });
 
 // ./run <URL_FILE>

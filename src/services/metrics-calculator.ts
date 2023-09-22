@@ -55,7 +55,7 @@ export class MetricsCalculator {
 
 
     /**
-     * Calculates the bus factor for a GitHub repository.
+     * Calculates the bus factor for a GitHub repository
      *
      * TODO: Implement error handling
      *
@@ -66,35 +66,31 @@ export class MetricsCalculator {
             throw new Error("busFactorData or contributorCommits is undefined");
         }
 
-        // Convert the busFactorData Map to an array
-        const contributorArray: { contributor: string; commitCount: number }[] =
-            Array.from(busFactorData.contributorCommits.entries() as [string, number][]).map(([contributor, commitCount]) => ({
-                contributor,
-                commitCount
-            }));
+        // Convert the busFactorData Map to an array and sort by number of commits in descending order
+        const contributorArray = Array.from(busFactorData.contributorCommits.entries() as [string, number][]);
+        contributorArray.sort((a, b) => b[1] - a[1]);
 
+        // Calculate the overall total number of commits for the main branch
+        const overallTotalCommits = contributorArray.reduce((acc, curr) => acc + curr[1], 0);
+        const threshold = overallTotalCommits * 0.5; // Threshold is 50% of the total number of commits
 
-        // Sort contributors by commit count in descending order
-        contributorArray.sort((a, b) => b.commitCount - a.commitCount);
-
-        // Calculate 50% of total commits
-        const totalCommits = contributorArray.reduce((total, contributor) => total + contributor.commitCount, 0);
-        const threshold = totalCommits * 0.5;
-
-        // Find how many top contributors are needed to surpass the threshold
+        // Calculate the number of contributors needed to surpass the threshold
+        let accumulatedCommits = 0;
         let count = 0;
-        let topContributorsCommitCount = 0;
-
-        for (const contributor of contributorArray) {
-            topContributorsCommitCount += contributor.commitCount;
+        for (const [_, commitCount] of contributorArray) {
+            accumulatedCommits += commitCount;
             count++;
 
-            if (topContributorsCommitCount > threshold) {
+            if (accumulatedCommits >= threshold) {
                 break;
             }
         }
 
-        return count;
+        // Normalize the count to a score between 0 and 1
+        const busFactorScore = count === 0 ? 0 : count / contributorArray.length;
+
+        // Return score rounded to 2 decimal places
+        return Math.round(busFactorScore * 100) / 100;
     }
 
 
@@ -209,7 +205,16 @@ export class MetricsCalculator {
 
     async calculateResponsiveMaintainer(responsiveMaintainerData: any): Promise<number> {
 
-        return 0;
+        if (!responsiveMaintainerData || !responsiveMaintainerData.averageTimeInMillis) {
+            throw new Error("responsiveMaintainerData or averageTimeInMillis is undefined");
+        }
+
+        const lambda = 1 / (30 * 24 * 60 * 60 * 1000); // Using 30 days in milliseconds for scaling
+
+        // Calculate the score using the exponential scale
+        const score = Math.exp(-lambda * responsiveMaintainerData.averageTimeInMillis);
+
+        return Math.max(0, Math.min(1, score));  // Ensuring the score is within [0, 1]
     }
 
 
