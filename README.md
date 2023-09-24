@@ -10,7 +10,7 @@
 <!-- tocstop -->
 
 ## 🎯 Purpose
-The purpose of this CLI is to determine the quality of NPM packages by using publically available data from GitHub. These metrics include BusFactor, Correctness, Ramp Up Time, Responsiveness Maintainer, and License all scored from [0,1], which are used to calculate a normalized total NetScore.
+The purpose of this CLI is to determine the quality of NPM packages by using publically available data from GitHub. These metrics include BusFactor, Correctness, Ramp Up Time, Responsiveness Maintainer, and License all scored from [0,1], which are used to calculate a normalized total NetScore from [0,1].
 
 ## 🛠 Setup Instructions
 Follow the steps below to get the `./run <URL_FILE>` command to work:
@@ -73,10 +73,10 @@ Your file can contain URLs from:
 
 ## 🔍 Metric Calculation
 
-### Bus Factor
+### 1. Bus Factor
 The Bus Factor metric measures the risk associated with the number of contributors who are responsible for 50% of the code in a repository. If this number is 0, a score of 0 is assigned. Otherwise, the final score is calculated as the number of these contributors divided by the total number of contributors.
 
-### Correctness
+### 2. Correctness
 The correctness score is calculated based on the number of opened, closed, and merged requests, as well as the number of opened and closed issues, and the total sums of requests and issues.
 
 #### Issues (50% of Score)
@@ -89,7 +89,7 @@ The correctness score is calculated based on the number of opened, closed, and m
 - If this is not the case, a higher score is added as the ratio of merged and closed requests to open requests increases, ranging from 0.38 to 0.5.
 - If the ratio is less than 1, the percentage of open requests to total requests is checked and assigned a score from 0.1 to 0.25.
 
-### Ramp Up Time
+### 3 .Ramp Up Time
 The Ramp Up Time metric consists of two components: the existence and length of the Readme and the length of time between the last Readme update and the last commit. These components are added for the final Ramp Up Time Score.
 
 #### Readme Length (50% of Score)
@@ -100,13 +100,13 @@ The Ramp Up Time metric consists of two components: the existence and length of 
 #### Time Difference (50% of Score)
 - The length of time is judged based on the difference between the last Readme update and the last commit, on a scale ranging from 0 to 1 year, corresponding to a score of 0 to 0.5 being added to the final score.
 
-### Responsiveness Maintainer
+### 4. Responsiveness Maintainer
 This metric uses the average time taken for issues to be solved and evaluates it using an exponential decay function with a decay rate of 30 days, which is then normalized to fall within the range [0, 1].
 
-### License
+### 5. License
 This metric is a score of either 0 or 1, depending on whether or not the GitHub repo provided has a license.
 
-### Final NetScore
+### 6. NetScore
 The final NetScore is calculated using the following weights for the metrics added together, resulting in a score ranging from [0, 1]:
 - Responsiveness Maintainer Score * 0.28
 - Bus Factor * 0.28
