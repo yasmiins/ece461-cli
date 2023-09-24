@@ -237,7 +237,7 @@ export class MetricsCalculator {
      */
     async calculateResponsiveMaintainer(responsiveMaintainerData: any): Promise<number> {
 
-        // error is the respoinsive data is not fetched properly
+        // Error is the responsive data is not fetched properly
         if (!responsiveMaintainerData || !responsiveMaintainerData.averageTimeInMillis) {
             throw new Error("responsiveMaintainerData or averageTimeInMillis is undefined");
         }
@@ -263,7 +263,7 @@ export class MetricsCalculator {
     async calculateNetScore(busFactor: number, correctness: number, rampUp: number,
                             responsiveMaintainer: number, license: boolean): Promise<number> {
 
-        // formulae for the net score                        
+        // Formulae for the Net Score                        
         const NetScore = ((responsiveMaintainer * 0.28) + (busFactor * 0.28) + (rampUp * 0.22) + (correctness * 0.22)) * (license ? 1 : 0);
 
         return NetScore;
