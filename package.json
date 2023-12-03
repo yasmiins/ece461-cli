@@ -1,40 +1,41 @@
 {
-  "name": "ece461-cli",
-  "version": "1.0.0",
-  "description": "Retrieve metrics on npm modules hosted on GitHub",
-  "main": "dist/index.js",
-  "bin": {
-    "./run": "run"
+  "name": "frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "blob": "^0.1.0",
+    "file-saver": "^2.0.5",
+    "jszip": "^3.10.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-scripts": "5.0.1",
+    "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "build": "tsc",
-    "start": "node run",
-    "test": "jest"
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/yasmiins/ece461-npm-module-metrics.git"
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
   },
-  "author": "",
-  "license": "LGPL-2.1",
-  "bugs": {
-    "url": "https://github.com/yasmiins/ece461-npm-module-metrics/issues"
-  },
-  "homepage": "https://github.com/yasmiins/ece461-npm-module-metrics#readme",
-  "dependencies": {
-    "@octokit/graphql": "^7.0.1",
-    "commander": "^11.0.0",
-    "dotenv": "^16.3.1",
-    "figlet": "^1.6.0",
-    "isomorphic-git": "^1.24.5",
-    "reflect-metadata": "^0.1.13",
-    "tsyringe": "^4.8.0"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.5.4",
-    "@types/node": "^20.5.7",
-    "jest": "^29.6.4",
-    "ts-jest": "^29.1.1",
-    "typescript": "^5.2.2"
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
